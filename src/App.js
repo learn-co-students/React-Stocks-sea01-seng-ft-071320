@@ -17,6 +17,8 @@ class App extends Component {
   }
 
   addCard = (stock) => {
+    if (!this.state.portfolio.includes(stock)) {
+    }
     this.setState({ portfolio: [...this.state.portfolio, stock] });
   };
 
@@ -31,10 +33,10 @@ class App extends Component {
   };
 
   filterStocks = () => {
-    let filteredStocks = [...this.state.stocks];
+    let filteredStocks = this.state.stocks;
 
     if (this.state.filter !== "All") {
-      return (filteredStocks = filteredStocks.filter(
+      return (filteredStocks = this.state.stocks.filter(
         (stock) => stock.type === this.state.filter
       ));
     }
@@ -56,26 +58,12 @@ class App extends Component {
         if (a.name > b.name) {
           return 1;
         }
+        return 0;
       });
     }
 
-    console.log(sortedStocks);
-
     this.setState({ stocks: sortedStocks });
   };
-
-  //   else {
-  //     this.state.stocks.sort(function (a, b) {
-  //       if (stockA < stockB) {
-  //         return -1
-  //       } if (stockA > StockB) {
-  //         return 1
-  //       }
-  //       }
-  //     })
-  //   }
-  //     this.setState (stocks: #newvariable)
-  // };
 
   render() {
     return (
