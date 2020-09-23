@@ -8,8 +8,8 @@ const SearchBar = (props) => {
         <input
           type="radio"
           value="Alphabetically"
-          checked={props.alphabetically}
-          onClick={props.handleSortChange}
+          checked={props.sortBy === "alphabetically" ? true : false}
+          onChange={(e) => props.handleSort(e)}
         />
         Alphabetically
       </label>
@@ -17,8 +17,8 @@ const SearchBar = (props) => {
         <input
           type="radio"
           value="Price"
-          checked={props.price}
-          onClick={props.handleSortChange}
+          checked={props.sortBy === "price" ? true : false}
+          onChange={(e) => props.handleSort(e)}
         />
         Price
       </label>
@@ -26,7 +26,7 @@ const SearchBar = (props) => {
 
       <label>
         <strong>Filter:</strong>
-        <select onChange={props.handleFilterChange}>
+        <select onChange={(e) => props.handleFilter(e)} value={props.filterBy}>
           <option value="All">All</option>
           <option value="Tech">Tech</option>
           <option value="Sportswear">Sportswear</option>

@@ -10,7 +10,7 @@ class StockContainer extends Component {
           <Stock
             stock={stock}
             key={stock.id}
-            handleClick={this.props.handleClick}
+            handleStock={this.props.handleStock}
           />
         ))}
       </div>

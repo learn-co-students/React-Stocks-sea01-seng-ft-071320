@@ -7,59 +7,52 @@ class MainContainer extends Component {
   state = {
     stocks: [],
     portfolio: [],
-    filterBy: "",
-    alphabetically: false,
-    price: false,
+    sortBy: "alphabetically",
+    filterBy: "All",
   };
 
   componentDidMount = () => {
     fetch("http://localhost:3000/stocks")
       .then((res) => res.json())
-      .then((data) => this.setState({ stocks: data }));
+      .then((stocks) => this.setState({ stocks: stocks }));
   };
 
-  handAddleClick = (props) => {
-    if (!this.state.portfolio.includes(props.stock)) {
-      this.setState({ portfolio: [...this.state.portfolio, props.stock] });
+
+  handleAddStock = (stock) => {
+    if (!this.state.portfolio.includes(stock)) {
+      this.setState({ portfolio: [...this.state.portfolio, stock] });
     }
   };
 
-  handleRemoveClick = (props) => {
-    this.setState({
-      portfolio: this.state.portfolio.filter((stock) => stock !== props.stock),
-    });
+  handleRemoveStock = (stock) => {
+    const newPortfolio = this.state.portfolio.filter((s) => s.id !== stock.id);
+    this.setState({ portfolio: newPortfolio });
   };
-
-  handleFilterChange = (e) => {
+  handleFilter = (e) => {
     this.setState({ filterBy: e.target.value });
   };
-  handleSortChange = (e) => {
-    const name = e.target.value.toLowerCase();
-    this.setState({ [name]: !this.state[name] });
-  };
 
-  // stocksListToDisplay = () => {
-  //   return this.filterStockList().filter(
-  //     (stock) => this.state.portfolio.indexOf(stock) === -1
-  //   );
-  // };
-
-  filterStockList = () => {
-    if (this.state.filterBy.length > 0) {
-      if (this.state.filterBy === "All") {
-        return this.state.stocks;
-      } else {
-        return this.state.stocks.filter(
-          (stock) => stock.type === this.state.filterBy
-        );
-      }
+  handleSort = (e) => {
+    if (e.target.value === "Price") {
+      this.setState({ sortBy: "price" });
+    } else {
+      this.setState({ sortBy: "alphabetically" });
     }
-    return this.state.stocks;
   };
 
-  sortStockBy = () => {
-    if (this.state.alphabetically === true) {
-      this.filterStockList().sort(function (a, b) {
+  stockFilter = () => {
+    if (this.state.filterBy === "All") {
+      return this.state.stocks;
+    } else {
+      return this.state.stocks.filter(
+        (stock) => stock.type === this.state.filterBy
+      );
+    }
+  };
+
+  sortBy = () => {
+    if (this.state.sortBy === "alphabetically") {
+      return this.stockFilter().sort(function (a, b) {
         let nameA = a.ticker.toUpperCase();
         let nameB = b.ticker.toUpperCase();
         if (nameA < nameB) {
@@ -68,38 +61,39 @@ class MainContainer extends Component {
         if (nameA > nameB) {
           return 1;
         }
-
         return 0;
       });
     }
-    if (this.state.price === true) {
-      this.filterStockList().sort(function (a, b) {
+    if (this.state.sortBy === "price") {
+      return this.stockFilter().sort(function (a, b) {
         return a.price - b.price;
       });
     }
-    return this.filterStockList();
+
+    return this.stockFilter();
   };
 
   render() {
     return (
       <div>
         <SearchBar
-          price={this.state.price}
-          alphabetically={this.state.alphabetically}
-          handleSortChange={this.handleSortChange}
-          handleFilterChange={this.handleFilterChange}
+          handleSort={this.handleSort}
+          handleFilter={this.handleFilter}
+          sortBy={this.state.sortBy}
+          filterBy={this.state.filterBy}
         />
+
         <div className="row">
           <div className="col-8">
             <StockContainer
-              stocks={this.sortStockBy()}
-              handleClick={this.handAddleClick}
+              stocks={this.sortBy()}
+              handleStock={this.handleAddStock}
             />
           </div>
           <div className="col-4">
             <PortfolioContainer
               portfolio={this.state.portfolio}
-              handleClick={this.handleRemoveClick}
+              handleStock={this.handleRemoveStock}
             />
           </div>
         </div>
